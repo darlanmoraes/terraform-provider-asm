@@ -6,12 +6,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func resourceAppSyncMergedApiAssociation() *schema.Resource {
+func resourceAsmAppSyncMergedApiAssociation() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceAppSyncMergedApiAssociationCreate,
-		Read:   resourceAppSyncMergedApiAssociationRead,
-		Update: resourceAppSyncMergedApiAssociationUpdate,
-		Delete: resourceAppSyncMergedApiAssociationDelete,
+		Create: resourceAsmAppSyncMergedApiAssociationCreate,
+		Read:   resourceAsmAppSyncMergedApiAssociationRead,
+		Update: resourceAsmAppSyncMergedApiAssociationUpdate,
+		Delete: resourceAsmAppSyncMergedApiAssociationDelete,
 
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -29,6 +29,7 @@ func resourceAppSyncMergedApiAssociation() *schema.Resource {
 			"source_api_association_config": {
 				Type:     schema.TypeList,
 				Optional: true,
+				ForceNew: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"merge_type": {
@@ -51,7 +52,7 @@ func resourceAppSyncMergedApiAssociation() *schema.Resource {
 	}
 }
 
-func resourceAppSyncMergedApiAssociationCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceAsmAppSyncMergedApiAssociationCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*AWSClient)
 
 	input := &appsync.AssociateMergedGraphqlApiInput{
@@ -68,10 +69,10 @@ func resourceAppSyncMergedApiAssociationCreate(d *schema.ResourceData, meta inte
 
 	d.SetId(aws.StringValue(result.SourceApiAssociation.AssociationId))
 
-	return resourceAppSyncMergedApiAssociationRead(d, meta)
+	return resourceAsmAppSyncMergedApiAssociationRead(d, meta)
 }
 
-func resourceAppSyncMergedApiAssociationRead(d *schema.ResourceData, meta interface{}) error {
+func resourceAsmAppSyncMergedApiAssociationRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*AWSClient)
 
 	input := &appsync.GetSourceApiAssociationInput{
@@ -87,11 +88,12 @@ func resourceAppSyncMergedApiAssociationRead(d *schema.ResourceData, meta interf
 	d.Set("merged_api_identifier", result.SourceApiAssociation.MergedApiId)
 	d.Set("source_api_association_config", flattenSourceApiAssociationConfig(result.SourceApiAssociation.SourceApiAssociationConfig))
 	d.Set("source_api_identifier", result.SourceApiAssociation.SourceApiId)
+	d.Set("arn", result.SourceApiAssociation.AssociationArn)
 
 	return nil
 }
 
-func resourceAppSyncMergedApiAssociationUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceAsmAppSyncMergedApiAssociationUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*AWSClient)
 
 	input := &appsync.UpdateSourceApiAssociationInput{
@@ -112,10 +114,10 @@ func resourceAppSyncMergedApiAssociationUpdate(d *schema.ResourceData, meta inte
 		return err
 	}
 
-	return resourceAppSyncMergedApiAssociationRead(d, meta)
+	return resourceAsmAppSyncMergedApiAssociationRead(d, meta)
 }
 
-func resourceAppSyncMergedApiAssociationDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceAsmAppSyncMergedApiAssociationDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*AWSClient)
 
 	input := &appsync.DisassociateMergedGraphqlApiInput{

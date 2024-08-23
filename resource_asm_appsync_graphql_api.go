@@ -6,12 +6,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func resourceAppSyncGraphQLApi() *schema.Resource {
+func resourceAsmAppSyncGraphQLApi() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceAppSyncGraphQLApiCreate,
-		Read:   resourceAppSyncGraphQLApiRead,
-		Update: resourceAppSyncGraphQLApiUpdate,
-		Delete: resourceAppSyncGraphQLApiDelete,
+		Create: resourceAsmAppSyncGraphQLApiCreate,
+		Read:   resourceAsmAppSyncGraphQLApiRead,
+		Update: resourceAsmAppSyncGraphQLApiUpdate,
+		Delete: resourceAsmAppSyncGraphQLApiDelete,
 
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -52,6 +52,7 @@ func resourceAppSyncGraphQLApi() *schema.Resource {
 						"openid_connect_config": {
 							Type:     schema.TypeList,
 							Optional: true,
+							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"auth_ttl": {
@@ -76,6 +77,7 @@ func resourceAppSyncGraphQLApi() *schema.Resource {
 						"user_pool_config": {
 							Type:     schema.TypeList,
 							Optional: true,
+							MaxItems: 1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"app_id_client_regex": {
@@ -99,7 +101,7 @@ func resourceAppSyncGraphQLApi() *schema.Resource {
 			"api_type": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "GRAPHQL",
+				Default:  "MERGED",
 			},
 			"authentication_type": {
 				Type:     schema.TypeString,
@@ -108,6 +110,7 @@ func resourceAppSyncGraphQLApi() *schema.Resource {
 			"enhanced_metrics_config": {
 				Type:     schema.TypeList,
 				Optional: true,
+				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"data_source_level_metrics_behavior": {
@@ -133,6 +136,7 @@ func resourceAppSyncGraphQLApi() *schema.Resource {
 			"lambda_authorizer_config": {
 				Type:     schema.TypeList,
 				Optional: true,
+				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"authorizer_result_ttl_seconds": {
@@ -154,6 +158,7 @@ func resourceAppSyncGraphQLApi() *schema.Resource {
 			"log_config": {
 				Type:     schema.TypeList,
 				Optional: true,
+				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"cloudwatch_logs_role_arn": {
@@ -183,6 +188,7 @@ func resourceAppSyncGraphQLApi() *schema.Resource {
 			"openid_connect_config": {
 				Type:     schema.TypeList,
 				Optional: true,
+				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"auth_ttl": {
@@ -225,6 +231,7 @@ func resourceAppSyncGraphQLApi() *schema.Resource {
 			"user_pool_config": {
 				Type:     schema.TypeList,
 				Optional: true,
+				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"app_id_client_regex": {
@@ -250,6 +257,7 @@ func resourceAppSyncGraphQLApi() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "GLOBAL",
+				ForceNew: true,
 			},
 			"xray_enabled": {
 				Type:     schema.TypeBool,
@@ -264,11 +272,15 @@ func resourceAppSyncGraphQLApi() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"arn": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 	}
 }
 
-func resourceAppSyncGraphQLApiCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceAsmAppSyncGraphQLApiCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*AWSClient)
 
 	input := &appsync.CreateGraphqlApiInput{
@@ -298,10 +310,10 @@ func resourceAppSyncGraphQLApiCreate(d *schema.ResourceData, meta interface{}) e
 
 	d.SetId(aws.StringValue(result.GraphqlApi.ApiId))
 
-	return resourceAppSyncGraphQLApiRead(d, meta)
+	return resourceAsmAppSyncGraphQLApiRead(d, meta)
 }
 
-func resourceAppSyncGraphQLApiRead(d *schema.ResourceData, meta interface{}) error {
+func resourceAsmAppSyncGraphQLApiRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*AWSClient)
 
 	input := &appsync.GetGraphqlApiInput{
@@ -328,11 +340,12 @@ func resourceAppSyncGraphQLApiRead(d *schema.ResourceData, meta interface{}) err
 	d.Set("user_pool_config", flattenUserPoolConfig(result.GraphqlApi.UserPoolConfig))
 	d.Set("visibility", result.GraphqlApi.Visibility)
 	d.Set("xray_enabled", result.GraphqlApi.XrayEnabled)
+	d.Set("arn", aws.StringValue(result.GraphqlApi.Arn))
 
 	return nil
 }
 
-func resourceAppSyncGraphQLApiUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceAsmAppSyncGraphQLApiUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*AWSClient)
 
 	input := &appsync.UpdateGraphqlApiInput{
@@ -389,15 +402,22 @@ func resourceAppSyncGraphQLApiUpdate(d *schema.ResourceData, meta interface{}) e
 		input.XrayEnabled = aws.Bool(d.Get("xray_enabled").(bool))
 	}
 
+	if d.HasChange("tags") {
+		err := updateTags(d, meta)
+		if err != nil {
+			return err
+		}
+	}
+
 	_, err := client.AppSync.UpdateGraphqlApi(input)
 	if err != nil {
 		return err
 	}
 
-	return resourceAppSyncGraphQLApiRead(d, meta)
+	return resourceAsmAppSyncGraphQLApiRead(d, meta)
 }
 
-func resourceAppSyncGraphQLApiDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceAsmAppSyncGraphQLApiDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*AWSClient)
 
 	input := &appsync.DeleteGraphqlApiInput{

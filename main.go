@@ -18,8 +18,8 @@ func main() {
 					},
 				},
 				ResourcesMap: map[string]*schema.Resource{
-					"appsync_graphql_api":            resourceAppSyncGraphQLApi(),
-					"appsync_merged_api_association": resourceAppSyncMergedApiAssociation(),
+					"asm_appsync_graphql_api":            resourceAsmAppSyncGraphQLApi(),
+					"asm_appsync_merged_api_association": resourceAsmAppSyncMergedApiAssociation(),
 				},
 				ConfigureFunc: configureFunc,
 			}
