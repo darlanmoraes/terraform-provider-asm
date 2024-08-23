@@ -101,12 +101,12 @@ func resourceAsmAppSyncMergedApiAssociationUpdate(d *schema.ResourceData, meta i
 		MergedApiIdentifier: aws.String(d.Get("merged_api_identifier").(string)),
 	}
 
-	if d.HasChange("description") {
-		input.Description = aws.String(d.Get("description").(string))
+	if v, ok := d.GetOk("description"); ok {
+		input.Description = aws.String(v.(string))
 	}
 
-	if d.HasChange("source_api_association_config") {
-		input.SourceApiAssociationConfig = expandSourceApiAssociationConfig(d.Get("source_api_association_config").([]interface{}))
+	if v, ok := d.GetOk("source_api_association_config"); ok {
+		input.SourceApiAssociationConfig = expandSourceApiAssociationConfig(v.([]interface{}))
 	}
 
 	_, err := client.AppSync.UpdateSourceApiAssociation(input)

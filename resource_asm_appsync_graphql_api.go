@@ -355,52 +355,52 @@ func resourceAsmAppSyncGraphQLApiUpdate(d *schema.ResourceData, meta interface{}
 	}
 
 	if d.HasChangesExcept("tags", "tags_all") {
-		if d.HasChange("additional_authentication_providers") {
-			input.AdditionalAuthenticationProviders = expandAdditionalAuthenticationProviders(d.Get("additional_authentication_providers").([]interface{}))
+		if v, ok := d.GetOk("additional_authentication_providers"); ok {
+			input.AdditionalAuthenticationProviders = expandAdditionalAuthenticationProviders(v.([]interface{}))
 		}
 
-		if d.HasChange("enhanced_metrics_config") {
-			input.EnhancedMetricsConfig = expandEnhancedMetricsConfig(d.Get("enhanced_metrics_config").([]interface{}))
+		if v, ok := d.GetOk("enhanced_metrics_config"); ok {
+			input.EnhancedMetricsConfig = expandEnhancedMetricsConfig(v.([]interface{}))
 		}
 
-		if d.HasChange("introspection_config") {
-			input.IntrospectionConfig = aws.String(d.Get("introspection_config").(string))
+		if v, ok := d.GetOk("introspection_config"); ok {
+			input.IntrospectionConfig = aws.String(v.(string))
 		}
 
-		if d.HasChange("lambda_authorizer_config") {
-			input.LambdaAuthorizerConfig = expandLambdaAuthorizerConfig(d.Get("lambda_authorizer_config").([]interface{}))
+		if v, ok := d.GetOk("lambda_authorizer_config"); ok {
+			input.LambdaAuthorizerConfig = expandLambdaAuthorizerConfig(v.([]interface{}))
 		}
 
-		if d.HasChange("log_config") {
-			input.LogConfig = expandLogConfig(d.Get("log_config").([]interface{}))
+		if v, ok := d.GetOk("log_config"); ok {
+			input.LogConfig = expandLogConfig(v.([]interface{}))
 		}
 
-		if d.HasChange("merged_api_execution_role_arn") {
-			input.MergedApiExecutionRoleArn = aws.String(d.Get("merged_api_execution_role_arn").(string))
+		if v, ok := d.GetOk("merged_api_execution_role_arn"); ok {
+			input.MergedApiExecutionRoleArn = aws.String(v.(string))
 		}
 
-		if d.HasChange("open_id_connect_config") {
-			input.OpenIDConnectConfig = expandOpenIDConnectConfig(d.Get("open_id_connect_config").([]interface{}))
+		if v, ok := d.GetOk("open_id_connect_config"); ok {
+			input.OpenIDConnectConfig = expandOpenIDConnectConfig(v.([]interface{}))
 		}
 
-		if d.HasChange("owner_contact") {
-			input.OwnerContact = aws.String(d.Get("owner_contact").(string))
+		if v, ok := d.GetOk("owner_contact"); ok {
+			input.OwnerContact = aws.String(v.(string))
 		}
 
-		if d.HasChange("query_depth_limit") {
-			input.QueryDepthLimit = aws.Int64(int64(d.Get("query_depth_limit").(int)))
+		if v, ok := d.GetOk("query_depth_limit"); ok {
+			input.QueryDepthLimit = aws.Int64(int64(v.(int)))
 		}
 
-		if d.HasChange("resolver_count_limit") {
-			input.ResolverCountLimit = aws.Int64(int64(d.Get("resolver_count_limit").(int)))
+		if v, ok := d.GetOk("resolver_count_limit"); ok {
+			input.ResolverCountLimit = aws.Int64(int64(v.(int)))
 		}
 
-		if d.HasChange("user_pool_config") {
-			input.UserPoolConfig = expandUserPoolConfig(d.Get("user_pool_config").([]interface{}))
+		if v, ok := d.GetOk("user_pool_config"); ok {
+			input.UserPoolConfig = expandUserPoolConfig(v.([]interface{}))
 		}
 
-		if d.HasChange("xray_enabled") {
-			input.XrayEnabled = aws.Bool(d.Get("xray_enabled").(bool))
+		if v, ok := d.GetOk("xray_enabled"); ok {
+			input.XrayEnabled = aws.Bool(v.(bool))
 		}
 
 		_, err := client.AppSync.UpdateGraphqlApi(input)
