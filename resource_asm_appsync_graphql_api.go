@@ -354,7 +354,7 @@ func resourceAsmAppSyncGraphQLApiUpdate(d *schema.ResourceData, meta interface{}
 		Name:               aws.String(d.Get("name").(string)),
 	}
 
-	if d.HasChangeExcept("tags") || d.HasChangeExcept("tags_all") {
+	if d.HasChangesExcept("tags", "tags_all") {
 		if d.HasChange("additional_authentication_providers") {
 			input.AdditionalAuthenticationProviders = expandAdditionalAuthenticationProviders(d.Get("additional_authentication_providers").([]interface{}))
 		}
