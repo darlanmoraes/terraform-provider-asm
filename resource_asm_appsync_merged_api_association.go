@@ -22,7 +22,7 @@ func resourceAsmAppSyncMergedApiAssociation() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"merged_api_identifier": {
+			"merged_api_id": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
@@ -40,7 +40,7 @@ func resourceAsmAppSyncMergedApiAssociation() *schema.Resource {
 					},
 				},
 			},
-			"source_api_identifier": {
+			"source_api_id": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
@@ -57,9 +57,9 @@ func resourceAsmAppSyncMergedApiAssociationCreate(d *schema.ResourceData, meta i
 
 	input := &appsync.AssociateMergedGraphqlApiInput{
 		Description:                aws.String(d.Get("description").(string)),
-		MergedApiIdentifier:        aws.String(d.Get("merged_api_identifier").(string)),
+		MergedApiIdentifier:        aws.String(d.Get("merged_api_id").(string)),
 		SourceApiAssociationConfig: expandSourceApiAssociationConfig(d.Get("source_api_association_config").([]interface{})),
-		SourceApiIdentifier:        aws.String(d.Get("source_api_identifier").(string)),
+		SourceApiIdentifier:        aws.String(d.Get("source_api_id").(string)),
 	}
 
 	result, err := client.AppSync.AssociateMergedGraphqlApi(input)
@@ -77,7 +77,7 @@ func resourceAsmAppSyncMergedApiAssociationRead(d *schema.ResourceData, meta int
 
 	input := &appsync.GetSourceApiAssociationInput{
 		AssociationId:       aws.String(d.Id()),
-		MergedApiIdentifier: aws.String(d.Get("merged_api_identifier").(string)),
+		MergedApiIdentifier: aws.String(d.Get("merged_api_id").(string)),
 	}
 	result, err := client.AppSync.GetSourceApiAssociation(input)
 	if err != nil {
@@ -85,9 +85,9 @@ func resourceAsmAppSyncMergedApiAssociationRead(d *schema.ResourceData, meta int
 	}
 
 	d.Set("description", result.SourceApiAssociation.Description)
-	d.Set("merged_api_identifier", result.SourceApiAssociation.MergedApiId)
+	d.Set("merged_api_id", result.SourceApiAssociation.MergedApiId)
 	d.Set("source_api_association_config", flattenSourceApiAssociationConfig(result.SourceApiAssociation.SourceApiAssociationConfig))
-	d.Set("source_api_identifier", result.SourceApiAssociation.SourceApiId)
+	d.Set("source_api_id", result.SourceApiAssociation.SourceApiId)
 	d.Set("arn", result.SourceApiAssociation.AssociationArn)
 
 	return nil
@@ -98,7 +98,7 @@ func resourceAsmAppSyncMergedApiAssociationUpdate(d *schema.ResourceData, meta i
 
 	input := &appsync.UpdateSourceApiAssociationInput{
 		AssociationId:       aws.String(d.Id()),
-		MergedApiIdentifier: aws.String(d.Get("merged_api_identifier").(string)),
+		MergedApiIdentifier: aws.String(d.Get("merged_api_id").(string)),
 	}
 
 	if v, ok := d.GetOk("description"); ok {
@@ -122,7 +122,7 @@ func resourceAsmAppSyncMergedApiAssociationDelete(d *schema.ResourceData, meta i
 
 	input := &appsync.DisassociateMergedGraphqlApiInput{
 		AssociationId:       aws.String(d.Id()),
-		SourceApiIdentifier: aws.String(d.Get("source_api_identifier").(string)),
+		SourceApiIdentifier: aws.String(d.Get("source_api_id").(string)),
 	}
 
 	_, err := client.AppSync.DisassociateMergedGraphqlApi(input)

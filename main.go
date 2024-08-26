@@ -20,6 +20,7 @@ func main() {
 				ResourcesMap: map[string]*schema.Resource{
 					"asm_appsync_graphql_api":            resourceAsmAppSyncGraphQLApi(),
 					"asm_appsync_merged_api_association": resourceAsmAppSyncMergedApiAssociation(),
+					"asm_appsync_start_schema_merge":     resourceAsmAppSyncStartSchemaMerge(),
 				},
 				ConfigureFunc: configureFunc,
 			}
